@@ -102,7 +102,7 @@ st.markdown(
 
     We will use [K-Means](https://scikit-learn.org/stable/modules/generated/sklearn.cluster.KMeans.html#sklearn.cluster.KMeans) clustering algorithm to cluster the errors made. The number of clusters is an important hyperparameter when running K-Means. To determine the optimal number of clusters, we will use the elbow method.
 
-    Before can test different number of clusters we need to convert the text to a representation that computer would understand. We will use [Sentence-BERT](https://www.sbert.net/) embeddings of the misclassified examples. Sentence-BERT models produce semantically meaningful sentence embeddings, which means sentences with similar meaning will be closer together in the vector space. 
+    Before we can test different number of clusters, we need to convert the text to a representation that computer would understand. We will use [Sentence-BERT](https://www.sbert.net/) embeddings of the misclassified examples. Sentence-BERT models produce semantically meaningful sentence embeddings, which means sentences with similar meaning will be closer together in the vector space. 
 
     There are many Sentence-BERT models available, the particular [model](https://huggingface.co/sentence-transformers/all-distilroberta-v1) we're using produces embeddings with 768 dimensions. 
 
