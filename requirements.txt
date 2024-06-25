@@ -3,10 +3,11 @@ sentence-transformers
 plotly==5.22.0 
 altair
 pandas
-numpy
+numpy==1.26.4
 evaluate
 nltk
 transformers
 scipy
 scikit-learn
-spacy
+spacy==3.5.0
+en-core-web-sm @ https://github.com/explosion/spacy-models/releases/download/en_core_web_sm-3.5.0/en_core_web_sm-3.5.0.tar.gz
