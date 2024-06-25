@@ -10,3 +10,4 @@ transformers
 scipy
 scikit-learn
 spacy
+en-core-web-sm
