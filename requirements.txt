@@ -5,3 +5,7 @@ altair
 pandas
 numpy
 evaluate
+nltk
+transformers
+scipy
+scikit-learn
