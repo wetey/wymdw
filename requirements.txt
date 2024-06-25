@@ -1,0 +1,7 @@
+streamlit
+sentence-transformers
+plotly==5.22.0 
+altair
+pandas
+numpy
+evaluate
