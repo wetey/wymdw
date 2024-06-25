@@ -9,5 +9,4 @@ nltk
 transformers
 scipy
 scikit-learn
-spacy>=3.0,<4.0
-en-core-web-sm==3.7.5
+spacy
