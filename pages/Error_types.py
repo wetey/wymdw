@@ -4,6 +4,7 @@ import numpy as np
 import nltk 
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import sent_tokenize
+from nltk.stem import SnowballStemmer
 from spacy.lang.en.stop_words import STOP_WORDS
 import spacy
 from tqdm import tqdm
@@ -26,6 +27,9 @@ stopwords.update(['film', 'movie', 'nt', 'like','','ve','films'])
 def tokenize(document):
   tokens = []
   sentences = sent_tokenize(document)
+  
+  ss = SnowballStemmer("english")
+  
   for sentence in sentences:
     words = word_tokenize(sentence)
 
@@ -34,6 +38,7 @@ def tokenize(document):
 
     #remove all punctuation
     words = [word.translate(str.maketrans('', '', string.punctuation)) for word in words]
+    words = [ss.stem(word) for word in words]
 
     #remove stop words
     words = [word for word in words if word.lower() not in stopwords]
@@ -64,9 +69,6 @@ st.markdown(
     Now we are going to look at more model specific features of the errors (the false positives and false negatives).
 
     The false positives refer to examples that were misclassified as positive (the correct label is negative) and the false negatives refer to examples that were misclassified as negative (the correct label is positive).
-
-    The treemap below shows the the most frequent words for the false positives (blue) and the false negatives (red). The size and color of the box is proportional to the log odd ratio. 
-        
     """)
 
 dataset = pd.read_json('data/updated_baseline.json')
@@ -150,6 +152,10 @@ positive_word_ratio = pd.DataFrame({top_30_positive_words.name: top_30_positive_
 negative_word_ratio = pd.DataFrame({top_30_negative_words.name: top_30_negative_words, 
                                     top_30_negative_logs.name: top_30_negative_logs})
 
+st.write('## False Positives')
+st.markdown('''
+    Below is a tree map that shows the top 30 words that are more likely to occur in examples predicted as positive. We can see that \"man\" and \"bad\" are more often associated with examples that should've been labeled as \"Negative\".  
+''')
 fig_pos = px.treemap(positive_word_ratio, path=['word'], 
                  values ='log',
                  color_continuous_scale = 'blues',
@@ -159,7 +165,10 @@ fig_pos = px.treemap(positive_word_ratio, path=['word'],
 fig_pos.update_layout(legend= dict(font = dict(size = 14, color = 'black')))
 st.plotly_chart(fig_pos)
 
-
+st.write('## False Negatives')
+st.markdown('''
+    The tree map belows show the top 30 words that are more likely to occur in examples predicted as positive. Words like \"train\", \"snake\", and \"scene\" are more often associated with examples that were mislabeled as \"Negative\".
+''')
 fig_neg = px.treemap(negative_word_ratio, path=['word'], 
                  values ='log',
                  color_continuous_scale = 'reds',
@@ -170,19 +179,3 @@ fig_neg.update_layout(legend = dict(font = dict(size = 14, color = 'black')))
 st.plotly_chart(fig_neg)
 
 
-# words = pd.Series(data = words, name = 'words')
-# logs = pd.Series(data = logs, name = 'logs')
-
-# word_ratio = pd.DataFrame({words.name: words, logs.name: logs})
-
-# fig = go.Figure(go.Treemap(
-#                  labels = word_ratio.words, 
-#                  values = word_ratio.logs,
-#                  marker = dict(colorscale = 'rdbu')))
-# fig = px.treemap(word_ratio, path=['words'], 
-#                  values ='logs',
-#                  color_continuous_scale = 'rdbu',
-#                  color = 'logs',
-#                  width = 1000,
-#                  height = 1000)
-# st.plotly_chart(fig)

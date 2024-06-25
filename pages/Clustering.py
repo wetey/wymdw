@@ -68,8 +68,8 @@ def find_optimal_num_clusters(embeddings):
         autosize=False,
         width = 1000,
         height = 600,
-        xaxis_title='Inertia',
-        yaxis_title='Number of Clusters'
+        xaxis_title='Number of Clusters',
+        yaxis_title='Inertia'
     )
     fig.update_yaxes(title_font_color='black')
     fig.update_xaxes(title_font_color='black')
@@ -77,24 +77,24 @@ def find_optimal_num_clusters(embeddings):
 
 st.set_page_config(page_title="Clustering")
 #change the labels to be a string instead of number
-dataset = pd.read_json('data/errors.json')
-model = SentenceTransformer('all-distilroberta-v1')
+dataset = pd.read_json('data/updated_baseline.json')
+# model = SentenceTransformer('all-distilroberta-v1')
 
-embeddings = model.encode(dataset.text)
-reduced_embeddings = PCA(n_components=10).fit_transform(embeddings)
-X_embedded = TSNE(n_components=2).fit_transform(embeddings)
-embeddings = embeddings.tolist()
-reduced_embeddings = reduced_embeddings.tolist()
+# embeddings = model.encode(dataset.text)
+# reduced_embeddings = PCA(n_components=10).fit_transform(embeddings)
+# X_embedded = TSNE(n_components=2).fit_transform(embeddings)
+embeddings = dataset.embedding.tolist()
+# reduced_embeddings = reduced_embeddings.tolist()
 
-dataset = pd.DataFrame({
-    'embedding': embeddings,
-    dataset.text.name: dataset.text,
-    dataset.label.name: dataset.label,
-    dataset.predicted.name: dataset.predicted,
-    'reduced_embedding': reduced_embeddings, 
-    'x': X_embedded[:,0],
-    'y': X_embedded[:,1]
-})
+# dataset = pd.DataFrame({
+#     'embedding': embeddings,
+#     dataset.text.name: dataset.text,
+#     dataset.label.name: dataset.label,
+#     dataset.predicted.name: dataset.predicted,
+#     'reduced_embedding': reduced_embeddings, 
+#     'x': X_embedded[:,0],
+#     'y': X_embedded[:,1]
+# })
 
 st.markdown(
     """
@@ -122,7 +122,7 @@ st.markdown(
     """
 )
 
-slider = st.slider(label = 'number of cluster to show', min_value = 2, max_value = 20, step = 1)
+slider = st.slider(label = 'number of cluster to show', min_value = 2, max_value = 20, step = 1, value = 16)
 #use embeddings of text to cluster 
 embeddings = np.array(dataset.embedding.tolist())
 Kmeans_clusterer = KMeans(n_clusters = slider, 
@@ -153,11 +153,16 @@ scatter = alt.Chart(dataset).mark_point(size=200, filled=True).encode(
 
 # save the baseline for now
 # idealy you want to use the cache or something
-dataset.to_json('data/updated_baseline.json', orient = 'records', indent = 4)
+# dataset.to_json('data/updated_baseline.json', orient = 'records', indent = 4)
 
 # TODO fix the placing of this
 st.altair_chart(scatter)
 
+st.markdown("""
+    Now that we have our errors grouped into clusters, we'll take a look at how the error types (the false positives and false negatives) are distributed across the clusters. 
+
+    Below is a stacked bar plot that shows the percentage of each label in the cluster. 
+""")
 
 dataset.loc[dataset['predicted'] == 1.0, 'pred_label'] = 'Positive'
 dataset.loc[dataset['predicted'] == 0.0, 'pred_label'] = 'Negative'
@@ -182,9 +187,9 @@ st.altair_chart(fig)
 st.markdown(
     """
 
-    Now we know the examples that were misclassified and which examples are somehow related to each other. But we want to know more about features of the misclassified examples..
+    Now we know the examples that were misclassified and which examples are somehow related to each other. We also looked at the predicted label distribution...
     
-    In the next visualization we will look at the false positives and false negatives.
+    In the next visualization we will only look at the false positives and false negatives.
 
     """
 )
