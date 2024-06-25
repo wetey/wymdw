@@ -5,7 +5,6 @@ import nltk
 from nltk.tokenize import word_tokenize
 from nltk.tokenize import sent_tokenize
 from nltk.stem import SnowballStemmer
-from spacy.lang.en.stop_words import STOP_WORDS
 import spacy
 from tqdm import tqdm
 import string
